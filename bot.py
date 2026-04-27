@@ -19,10 +19,9 @@ class LinariBot(Singleton):
 
     async def start(self):
         await self.dp.start_polling(self.bot)
-        logger.info("Bot was started")
 
     async def default_handler(self, message: Message) -> None:
-        user_channel_status = self.bot.get_chat_member(chat_id=self.config.CHANNEL_ID, user_id=message.from_user.id)
-        if user_channel_status != ChatMemberLeft:
+        user_channel_status = await self.bot.get_chat_member(chat_id=self.config.CHANNEL_ID, user_id=message.from_user.id)
+        if isinstance(user_channel_status, ChatMemberLeft):
             await message.delete()
             logger.info(f"Message from {message.from_user.full_name} was deleted")
