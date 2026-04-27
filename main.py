@@ -1,29 +1,27 @@
 import asyncio
-from os import getenv
+import logging
 
-from aiogram import Dispatcher, Bot
-from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
-from aiogram.types import Message, ChatMemberLeft
+from loguru import logger
 
-TOKEN = getenv("TOKEN")
-CHANNEL_ID = getenv("CHANNEL_ID")
-
-bot: Bot
-dp = Dispatcher()
+from bot import LinariBot
+from config import Config
 
 
-@dp.message()
-async def bots_filter(message: Message) -> None:
-    user_channel_status = bot.get_chat_member(chat_id=CHANNEL_ID, user_id=message.from_user.id)
-    if user_channel_status != ChatMemberLeft:
-        await message.delete()
+def setup_logger():
+    logging.disable(logging.CRITICAL)
+
+    logger.add("../logs/log_{time}.log")
+    logger.info("Logger was configured")
+
+
+def setup():
+    setup_logger()
 
 
 async def main() -> None:
-    global bot
-    bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-    await dp.start_polling(bot)
+    config = Config()
+    bot = LinariBot(config)
+    await bot.start()
 
 
 if __name__ == "__main__":
