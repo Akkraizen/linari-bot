@@ -9,10 +9,10 @@ from struture.singleton import Singleton
 
 
 class LinariBot(Singleton):
-    def __init__(self, config: Config):
+    def __init__(self):
         if not self.created:
-            self.config = config
-            self.bot = Bot(token=config.TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+            self.config = Config()
+            self.bot = Bot(token=self.config.TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
             self.dp = Dispatcher()
             self.dp.message.register(self.default_handler)
             logger.info("Bot instance was created")

@@ -20,8 +20,7 @@ def setup():
 
 async def main() -> None:
     setup()
-    config = Config()
-    bot = LinariBot(config)
+    bot = LinariBot()
     await bot.start()
 
 
