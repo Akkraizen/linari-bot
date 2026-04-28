@@ -1,6 +1,10 @@
-from aiogram import Router
+from typing import Any
+
+from aiogram import Router, F
 from aiogram.filters import ChatMemberUpdatedFilter, IS_NOT_MEMBER, IS_MEMBER
-from aiogram.types import ChatMemberUpdated, ChatMemberLeft, ChatMemberRestricted, ChatMemberBanned
+from aiogram.types import ChatMemberUpdated, \
+    InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, ChatPermissions, ChatMemberBanned, ChatMemberLeft
+from loguru import logger
 
 from config import Config
 from utils import get_member_status
@@ -9,20 +13,63 @@ router = Router(name="member_router")
 config = Config()
 
 
-@router.chat_member(ChatMemberUpdatedFilter(IS_NOT_MEMBER >> IS_MEMBER))
-async def new_member_handler(event: ChatMemberUpdated) -> None:
-    member_status = await get_member_status(event.bot, config.CHANNEL_ID, event.from_user.id)
-    if isinstance(member_status, (ChatMemberLeft, ChatMemberRestricted, ChatMemberBanned)):
-        return
-
-    if event.chat.type == "channel":
-        return
-
-    await event.answer("""
+__WELCOME_TEXT = """
 Привет, путник! Правил тут не много:
 1. Оскорбления - бан
 2. Вбросы 18+ контента - бан
 3. Экстримизм - бан
 
+Прежде, чем начать общаться — прими правила.
+
 Добро пожаловать🩵
-    """.strip())
+"""
+
+
+@router.chat_member(ChatMemberUpdatedFilter(IS_NOT_MEMBER >> IS_MEMBER))
+async def new_member_handler(event: ChatMemberUpdated) -> None:
+    try:
+        await event.bot.restrict_chat_member(
+            event.chat.id,
+            event.new_chat_member.user.id,
+            permissions=ChatPermissions(can_send_messages=False)
+        )
+        logger.info(f"Member {event.new_chat_member.user.id} was muted")
+    except Exception as e:
+        logger.exception(e)
+
+    if event.chat.type == "channel":
+        return
+
+
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Понятно", callback_data=f"accept_{event.new_chat_member.user.id}")]
+    ])
+
+    await event.answer(__WELCOME_TEXT, reply_markup=kb)
+
+
+@router.callback_query(F.data.startswith("accept_"))
+async def accept_button_handler(callback: CallbackQuery) -> Any:
+    _, user_id = callback.data.split("_")
+    user_id = int(user_id)
+
+    if user_id != callback.from_user.id:
+        return await callback.answer("Это сообщение адресовано не вам!", show_alert=True)
+
+    member_status = await get_member_status(callback.bot, config.CHANNEL_ID, user_id)
+    logger.info(member_status)
+
+    if isinstance(member_status, (ChatMemberLeft, ChatMemberBanned)):
+        return await callback.answer("Подпишись на канал Лины! @linari_me", show_alert=True)
+
+    try:
+        await callback.bot.restrict_chat_member(
+            callback.message.chat.id,
+            user_id,
+            permissions=ChatPermissions(can_send_messages=True)
+        )
+        logger.info(f"Member {user_id} was unmuted")
+    except Exception as e:
+        logger.exception(e)
+
+    return await callback.message.delete()

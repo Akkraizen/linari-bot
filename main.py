@@ -1,5 +1,4 @@
 import asyncio
-import logging
 
 from loguru import logger
 
@@ -7,8 +6,6 @@ from bot import LinariBot
 
 
 def setup_logger():
-    logging.disable(logging.CRITICAL)
-
     logger.add("../logs/log_{time}.log")
     logger.info("Logger was configured")
 
