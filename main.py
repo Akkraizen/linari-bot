@@ -4,7 +4,6 @@ import logging
 from loguru import logger
 
 from bot import LinariBot
-from config import Config
 
 
 def setup_logger():
