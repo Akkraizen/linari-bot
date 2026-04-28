@@ -25,13 +25,13 @@ class LinariBot(Singleton):
 
     async def new_member_handler(self, event: ChatMemberUpdated):
         await event.answer("""
-        Привет, путник! Правил тут не много:
-        1. Оскорбления - бан
-        2. Вбросы 18+ контента - бан
-        3. Экстримизм - бан
-        
-        Добро пожаловать🩵
-    """.strip())
+Привет, путник! Правил тут не много:
+1. Оскорбления - бан
+2. Вбросы 18+ контента - бан
+3. Экстримизм - бан
+
+Добро пожаловать🩵
+        """.strip())
 
 
     async def default_handler(self, message: Message) -> None:
