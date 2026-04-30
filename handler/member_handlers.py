@@ -14,7 +14,7 @@ config = Config()
 
 
 __WELCOME_TEXT = """
-Привет, путник! Правил тут не много:
+Привет, <a href="tg://user?id={user_id}">путник</a>! Правил тут не много:
 1. Оскорбления - бан
 2. Вбросы 18+ контента - бан
 3. Экстримизм - бан
@@ -40,12 +40,12 @@ async def new_member_handler(event: ChatMemberUpdated) -> None:
     if event.chat.type == "channel":
         return
 
-
+    user_id = event.new_chat_member.user.id
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Понятно", callback_data=f"accept_{event.new_chat_member.user.id}")]
+        [InlineKeyboardButton(text="Понятно", callback_data=f"accept_{user_id}")]
     ])
 
-    await event.answer(__WELCOME_TEXT, reply_markup=kb)
+    await event.answer(__WELCOME_TEXT.format(**{"user_id": user_id}), reply_markup=kb, parse_mode="HTML")
 
 
 @router.callback_query(F.data.startswith("accept_"))
