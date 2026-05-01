@@ -1,4 +1,5 @@
 import asyncio
+from contextlib import suppress
 
 from loguru import logger
 
@@ -21,4 +22,5 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    with suppress(KeyboardInterrupt):
+        asyncio.run(main())
