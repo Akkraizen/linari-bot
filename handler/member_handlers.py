@@ -42,7 +42,11 @@ async def new_member_handler(event: ChatMemberUpdated) -> None:
                 can_send_polls=False,
                 can_send_other_messages=False,
                 can_add_web_page_previews=False,
-                can_invite_users=False
+                can_edit_tag=False,
+                can_change_info=False,
+                can_invite_users=False,
+                can_pin_messages=False,
+                can_manage_topics=False
             )
         )
         logger.info(f"Member {event.new_chat_member.user.id} was muted")
@@ -89,7 +93,11 @@ async def accept_button_handler(callback: CallbackQuery) -> Any:
                 can_send_polls=True,
                 can_send_other_messages=True,
                 can_add_web_page_previews=True,
-                can_invite_users=True
+                can_edit_tag=True,
+                can_change_info=True,
+                can_invite_users=True,
+                can_pin_messages=True,
+                can_manage_topics=True
             )
         )
         logger.info(f"Member {user_id} was unmuted")
