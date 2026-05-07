@@ -1,0 +1,32 @@
+name: Build and Publish Bot
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  SERVER_HOST: ${{ secrets.SERVER_HOST }}
+  SERVER_USER: ${{ secrets.SERVER_USER }}
+  SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.SERVER_HOST }}
+          username: ${{ env.SERVER_USER }}
+          password: ${{ env.SERVER_SSH_KEY }}
+          script: |
+            cd /home/linari-bot
+            git pull origin
+            docker build --tag 'linari_telegram_bot' . 
+            docker stop tgbot
+            docker rm tgbot
+            docker run -e "TOKEN=${{ secrets.TOKEN }}" -e "CHANNEL_ID=${{ secrets.CHANNEL_ID }}" -d --restart always --name tgbot linari_telegram_bot
