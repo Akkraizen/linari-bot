@@ -25,7 +25,9 @@ jobs:
           password: ${{ env.SERVER_SSH_KEY }}
           script: |
             cd /home/linari-bot
-            git merge --abort
+            git fetch
+            git merge origin/master
+            git pull origin master
             docker build --tag 'linari_telegram_bot' . 
             docker stop tgbot
             docker rm tgbot
