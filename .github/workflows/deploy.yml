@@ -25,7 +25,7 @@ jobs:
           password: ${{ env.SERVER_SSH_KEY }}
           script: |
             cd /home/linari-bot
-            git rebase
+            git merge --no-ff
             docker build --tag 'linari_telegram_bot' . 
             docker stop tgbot
             docker rm tgbot
