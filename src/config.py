@@ -8,4 +8,3 @@ class Config(Singleton):
         if not self.created:
             self.TOKEN = getenv("TOKEN")
             self.CHANNEL_ID = getenv("CHANNEL_ID")
-            self.CHAT_ID = getenv("CHAT_ID")

@@ -3,13 +3,14 @@ from typing import Any
 from aiogram import Router, F
 from aiogram.filters import ChatMemberUpdatedFilter, IS_NOT_MEMBER, IS_MEMBER
 from aiogram.types import ChatMemberUpdated, \
-    InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, ChatPermissions, ChatMemberBanned, ChatMemberLeft
+    InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, ChatPermissions, ChatMemberBanned, ChatMemberLeft, \
+    Message
 from loguru import logger
 
 from config import Config
 from utils import get_member_status
 
-router = Router(name="member_router")
+router = Router(name="welcome_router")
 config = Config()
 
 
@@ -22,12 +23,18 @@ __WELCOME_TEXT = """
 Прежде, чем начать общаться — прими правила.
 
 Добро пожаловать🩵
+
+Используй <code>/links</code> для просмотра остальных соцсетей🩵
 """
 
 
 @router.chat_member(ChatMemberUpdatedFilter(IS_NOT_MEMBER >> IS_MEMBER))
-async def new_member_handler(event: ChatMemberUpdated) -> None:
+async def new_member_handler(event: ChatMemberUpdated) -> Message | None:
+    if event.bot is None and event.chat is None:
+        return await event.answer("Произошла ошибка!")
+
     try:
+        # noinspection PyUnresolvedReferences
         await event.bot.restrict_chat_member(
             event.chat.id,
             event.new_chat_member.user.id,
@@ -54,18 +61,21 @@ async def new_member_handler(event: ChatMemberUpdated) -> None:
         logger.exception(e)
 
     if event.chat.type == "channel":
-        return
+        return None
 
     user_id = event.new_chat_member.user.id
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Понятно", callback_data=f"accept_{user_id}")]
     ])
 
-    await event.answer(__WELCOME_TEXT.format(**{"user_id": user_id}), reply_markup=kb, parse_mode="HTML")
+    return await event.answer(__WELCOME_TEXT.format(**{"user_id": user_id}), reply_markup=kb, parse_mode="HTML")
 
 
 @router.callback_query(F.data.startswith("accept_"))
 async def accept_button_handler(callback: CallbackQuery) -> Any:
+    if callback.data is None:
+        return await callback.answer("Произошла ошибка!")
+
     _, user_id = callback.data.split("_")
     user_id = int(user_id)
 
@@ -79,6 +89,10 @@ async def accept_button_handler(callback: CallbackQuery) -> Any:
         return await callback.answer("Подпишись на канал Лины! @linari_me", show_alert=True)
 
     try:
+        if not isinstance(callback.message, Message):
+            return None
+
+        # noinspection PyUnresolvedReferences
         await callback.bot.restrict_chat_member(
             callback.message.chat.id,
             user_id,
@@ -104,4 +118,7 @@ async def accept_button_handler(callback: CallbackQuery) -> Any:
     except Exception as e:
         logger.exception(e)
 
-    return await callback.message.delete()
+    if isinstance(callback.message, Message):
+        return await callback.message.delete()
+    return None
+

@@ -2,9 +2,11 @@ from aiogram import Dispatcher, Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from loguru import logger
-from handler.member_handlers import router as member_router
+from handler.welcome_handlers import router as welcome_router
+from handler.links_command import router as links_command
 
 from config import Config
+from middleware.throttling_middleware import UserThrottlingMiddleware, GlobalThrottlingMiddleware
 from struture.singleton import Singleton
 
 
@@ -17,7 +19,11 @@ class LinariBot(Singleton):
             logger.info("Bot instance was created")
 
     async def configure(self):
-        self.dp.include_router(member_router)
+        self.dp.include_router(welcome_router)
+        self.dp.include_router(links_command)
+
+        self.dp.message.middleware(GlobalThrottlingMiddleware())
+        self.dp.message.middleware(UserThrottlingMiddleware())
         logger.info("Bot was configured")
 
     async def start(self):

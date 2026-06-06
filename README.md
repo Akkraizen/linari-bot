@@ -1,47 +1,43 @@
 # LinariBot
 
 ## Description
-LinariBot is a Telegram bot designed to [Linari](https://t.me/linari_me) community.
+LinariBot is a Telegram bot designed for the [Linari](https://t.me/linari_me) community. The bot welcomes new members and enforces community rules by restricting users until they accept the guidelines.
+
+
+## Features
+- Greets new members with rules and restrictions
+- Restricts users until they accept the community rules
+- Russian language interface
+- Throttling middleware to prevent spam
+- Uses singleton pattern for bot instance
+- Works with a Telegram channel
+
+## Prerequisites
+- Python 3.8 or higher
+- uv 0.11.16 or higher
 
 ## Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/linari-bot.git
+   git clone https://github.com/kiNgchev/linari-bot.git
    ```
-2. Create a virtual environment:
-   - With python 
+2. Sync the uv project:
    ```bash
-   python -m venv .venv
+   uv sync
    ```
-   - With python3
-   ```bash
-    python3 -m venv .venv
-    ```
-3. Activate the virtual environment:
-   - On Windows:
-     ```bash
-     .venv\Scripts\activate
-     ```
-   - On Unix or MacOS:
-     ```bash
-     source .venv/bin/activate
-     ```
-4. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+
+## Configuration
+Set up the following environment variables:
+- `TOKEN` – Telegram bot token
+- `CHANNEL_ID` – Telegram channel ID, which the bot should be subscribed to
+- `CHAT_ID` – Telegram chat ID where the bot should operate
+
 
 ## Usage
 Run the bot:
    ```bash
-   python bot.py
+   uv run src/main.py
    ```
-
-## Configuration
-Set up the next environment variables:
-- `TOKEN` – Telegram bot token.
-- `CHANNEL_ID` – Telegram channel ID, which the bot should be subscribed to.
-
 ## Deployment
 Use the provided Dockerfile to containerize the application for deployment.
 Follow the instructions in the Dockerfile to build and run the Docker image.
