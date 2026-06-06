@@ -8,3 +8,4 @@ class Config(Singleton):
         if not self.created:
             self.TOKEN = getenv("TOKEN")
             self.CHANNEL_ID = getenv("CHANNEL_ID")
+            self.OWNERS = list(map(int, getenv("OWNERS").split(",")))

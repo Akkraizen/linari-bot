@@ -4,6 +4,7 @@ from aiogram.enums import ParseMode
 from loguru import logger
 from handler.welcome_handlers import router as welcome_router
 from handler.links_command import router as links_command
+from handler.dev_commands import router as dev_commands
 
 from config import Config
 from middleware.throttling_middleware import UserThrottlingMiddleware, GlobalThrottlingMiddleware
@@ -21,6 +22,7 @@ class LinariBot(Singleton):
     async def configure(self):
         self.dp.include_router(welcome_router)
         self.dp.include_router(links_command)
+        self.dp.include_router(dev_commands)
 
         self.dp.message.middleware(GlobalThrottlingMiddleware())
         self.dp.message.middleware(UserThrottlingMiddleware())

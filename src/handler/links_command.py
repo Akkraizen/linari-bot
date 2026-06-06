@@ -6,11 +6,11 @@ from model.commands import Commands, Command
 router = Router(name="links_command_router")
 
 __LINKS_TEXT = """
-tiktok -  https://www.tiktok.com/@linarime_
-youtube - https://www.youtube.com/@linari_me
-twtch - https://www.twitch.tv/linari_me
+TikTok -  https://www.tiktok.com/@linarime_
+Youtube - https://www.youtube.com/@linari_me
+Twitch - https://www.twitch.tv/linari_me
 
-поддержать автора рублем - https://www.donationalerts.com/r/linari_me
+Поддержать автора рублем - https://www.donationalerts.com/r/linari_me
 """
 
 @router.message(Command(Commands.LINKS))

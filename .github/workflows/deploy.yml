@@ -32,4 +32,4 @@ jobs:
             docker build --tag 'linari_telegram_bot' . 
             docker stop tgbot
             docker rm tgbot
-            docker run -e "TOKEN=${{ secrets.TOKEN }}" -e "CHANNEL_ID=${{ secrets.CHANNEL_ID }}" -d --restart always --name tgbot linari_telegram_bot
+            docker run -e "TOKEN=${{ secrets.TOKEN }}" -e "CHANNEL_ID=${{ secrets.CHANNEL_ID }}" -e "OWNERS=${{ secrets.OWNERS }}" -d --restart always --name tgbot linari_telegram_bot

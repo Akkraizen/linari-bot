@@ -35,6 +35,7 @@ class Command(AiogramCommand):
 
 class Commands(Enum):
     LINKS = "links"
+    PING = "ping"
 
     @staticmethod
     def is_command(text: str | None) -> bool:
