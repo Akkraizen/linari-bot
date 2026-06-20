@@ -9,7 +9,7 @@ from model.commands import Commands
 
 class UserThrottlingMiddleware(BaseMiddleware):
     def __init__(self) -> None:
-        self.__cache = TTLCache(maxsize=10_000, ttl=3)
+        self.__cache = TTLCache(maxsize=10_000, ttl=1)
 
     async def __call__(self, handler: Callable[[Message, dict[str, Any]],Awaitable[Any]], event: Message, data: dict[str, Any]) -> Any:
         if event.from_user is None or not Commands.is_command(event.text):
@@ -18,7 +18,7 @@ class UserThrottlingMiddleware(BaseMiddleware):
         user_id = event.from_user.id
 
         if user_id in self.__cache:
-            return await event.answer("Подожди! Ты слишком часто используешь эту команду!")
+            return await event.answer("Подожди! Ты слишком часто используешь команды!")
 
         self.__cache[user_id] = True
         return await handler(event, data)

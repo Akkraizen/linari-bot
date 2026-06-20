@@ -47,3 +47,14 @@ class Commands(Enum):
             if normalized.startswith("/" + command.value):
                 return True
         return False
+
+    @staticmethod
+    def get_command(text: str | None) -> str | None:
+        if text is None:
+            return None
+
+        normalized = str(text or "").strip().lower()
+        for command in Commands:
+            if normalized.startswith("/" + command.value):
+                return command.value
+        return None
