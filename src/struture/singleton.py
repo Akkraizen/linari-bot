@@ -1,17 +1,15 @@
 class Singleton:
-    __instance: object = None
-    __created: bool = False
+    _instance = None
 
     def __new__(cls, *args, **kwargs):
-        if cls.__instance is None and cls.__created is False:
-            cls.__instance = object.__new__(cls)
-            __created = True
-        return cls.__instance
+        if not cls._instance:
+            cls._instance = super(Singleton, cls).__new__(cls)
+            cls._instance._created = False
+        return cls._instance
 
     @property
     def created(self) -> bool:
-        if not self.__created:
-            self.__created = True
+        if not self._created:
+            self._created = True
             return False
-        else:
-            return True
+        return True

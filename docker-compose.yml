@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: linari_db
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: ${DB_NAME:-linari}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${DB_NAME:-linari}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+
+  bot:
+    build: .
+    container_name: linari_bot
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      TOKEN: ${TOKEN}
+      CHANNEL_ID: ${CHANNEL_ID}
+      OWNERS: ${OWNERS}
+      DATABASE_URL: postgresql+asyncpg://${DB_USER:-postgres}:${DB_PASSWORD:-password}@db:5432/${DB_NAME:-linari}
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

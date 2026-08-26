@@ -6,7 +6,10 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "aiogram>=3.28.2",
+    "asyncpg>=0.31.0",
     "cachetools>=7.1.4",
     "loguru>=0.7.3",
+    "sqlalchemy>=2.0.52",
+    "apscheduler>=3.11.0",
 ]
 

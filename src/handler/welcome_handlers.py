@@ -1,24 +1,34 @@
-from typing import Any
-
 from aiogram import Router, F
 from aiogram.filters import ChatMemberUpdatedFilter, IS_NOT_MEMBER, IS_MEMBER
-from aiogram.types import ChatMemberUpdated, \
-    InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, ChatPermissions, ChatMemberBanned, ChatMemberLeft, \
+from aiogram.types import (
+    ChatMemberUpdated,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    CallbackQuery,
+    ChatPermissions,
+    ChatMemberBanned,
+    ChatMemberLeft,
     Message
+)
 from loguru import logger
 
-from config import Config
-from utils import get_member_status
+from config import Config, RESTRICTION_PERMISSIONS
+from model.commands import Commands, Command
+from utils.utils import get_member_status
 
 router = Router(name="welcome_router")
 config = Config()
 
 
-__WELCOME_TEXT = """
-Привет, <a href="tg://user?id={user_id}">путник</a>! Правил тут не много:
+__RULES = """
 1. Оскорбления - бан
 2. Вбросы 18+ контента - бан
 3. Экстремизм - бан
+"""
+
+__WELCOME_TEXT = """
+Привет, <a href="tg://user?id={user_id}">путник</a>! Правил тут не много:
+{rules}
 
 Прежде, чем начать общаться — прими правила.
 
@@ -26,6 +36,11 @@ __WELCOME_TEXT = """
 
 Используй <code>/links</code> для просмотра остальных соцсетей🩵
 """
+
+
+@router.message(Command(Commands.RULES))
+async def links_command(message: Message) -> Message:
+    return await message.answer(__RULES, disable_web_page_preview=True)
 
 
 @router.chat_member(ChatMemberUpdatedFilter(IS_NOT_MEMBER >> IS_MEMBER))
@@ -38,23 +53,7 @@ async def new_member_handler(event: ChatMemberUpdated) -> Message | None:
         await event.bot.restrict_chat_member(
             event.chat.id,
             event.new_chat_member.user.id,
-            permissions=ChatPermissions(
-                can_send_messages=False,
-                can_send_audios=False,
-                can_send_documents=False,
-                can_send_photos=False,
-                can_send_videos=False,
-                can_send_video_notes=False,
-                can_send_voice_notes=False,
-                can_send_polls=False,
-                can_send_other_messages=False,
-                can_add_web_page_previews=False,
-                can_edit_tag=False,
-                can_change_info=False,
-                can_invite_users=False,
-                can_pin_messages=False,
-                can_manage_topics=False
-            )
+            permissions=RESTRICTION_PERMISSIONS
         )
         logger.info(f"Member {event.new_chat_member.user.id} was muted")
     except Exception as e:
@@ -68,11 +67,11 @@ async def new_member_handler(event: ChatMemberUpdated) -> Message | None:
         [InlineKeyboardButton(text="Понятно", callback_data=f"accept_{user_id}")]
     ])
 
-    return await event.answer(__WELCOME_TEXT.format(**{"user_id": user_id}), reply_markup=kb, parse_mode="HTML")
+    return await event.answer(__WELCOME_TEXT.format(**{"user_id": user_id, "rules": __RULES}), reply_markup=kb, parse_mode="HTML")
 
 
 @router.callback_query(F.data.startswith("accept_"))
-async def accept_button_handler(callback: CallbackQuery) -> Any:
+async def accept_button_handler(callback: CallbackQuery):
     if callback.data is None:
         return await callback.answer("Произошла ошибка!")
 

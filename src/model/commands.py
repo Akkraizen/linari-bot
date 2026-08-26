@@ -35,7 +35,17 @@ class Command(AiogramCommand):
 
 class Commands(Enum):
     LINKS = "links"
+    RULES = "rules"
     PING = "ping"
+    WARN = "warn"
+    BAN = "ban"
+    MUTE = "mute"
+    UNWARN = "unwarn"
+    UNBAN = "unban"
+    UNMUTE = "unmute"
+    SETMOD = "setmod"
+    DELMOD = "delmod"
+    WARNS = "warns"
 
     @staticmethod
     def is_command(text: str | None) -> bool:
