@@ -104,3 +104,9 @@ class ModerationService:
                 mod_service = ModeratorService(session)
                 await mod_service.remove_moderator(user_id)
                 await session.commit()
+
+    async def get_mute(self, user_id: int, chat_id: int):
+        async with AsyncSessionLocal() as session:
+            async with session.begin():
+                mute_service = MuteService(session)
+                return await mute_service.get_mute(user_id, chat_id)
