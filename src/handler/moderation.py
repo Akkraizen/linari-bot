@@ -220,7 +220,6 @@ async def del_moderator(message: Message, command: CommandObject):
     await message.answer(f"Пользователь {user_id} больше не является модератором.")
 
 @router.message(Command("warns"))
-@check_permissions(1)
 async def list_warns(message: Message, command: CommandObject):
     target_user_id = None
     target_user_name = "Пользователь"
