@@ -232,6 +232,7 @@ async def list_warns(message: Message, command: CommandObject):
         target_user_name = f"Пользователь ID {target_user_id}"
     
     if not target_user_id:
+        target_user_name = message.from_user.full_name
         target_user_id = int(message.from_user.id)
         
     warns = await moderation_service.get_user_warns(target_user_id, message.chat.id)
