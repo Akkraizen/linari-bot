@@ -14,3 +14,11 @@ async def pozdnyakov_handler(message: Message) -> None:
 @router.message(F.text.regexp(r"(кац)", search=True, flags=RegexFlag.IGNORECASE))
 async def katz_handler(message: Message) -> None:
     await message.reply(italic("*Кац признан ебателем собак на территории данного чата"), parse_mode=ParseMode.MARKDOWN_V2)
+
+@router.message(F.text.regexp(r"(наки)", search=True, flags=RegexFlag.IGNORECASE))
+async def pozdnyakov_handler(message: Message) -> None:
+    await message.reply(italic("*Майкл Наки признан сыном собаки на территории данного чата"), parse_mode=ParseMode.MARKDOWN_V2)
+
+@router.message(F.text.regexp(r"(варлам)", search=True, flags=RegexFlag.IGNORECASE))
+async def katz_handler(message: Message) -> None:
+    await message.reply(italic("*Илья Варламов признан ебателем кошек на территории данного чата"), parse_mode=ParseMode.MARKDOWN_V2)
