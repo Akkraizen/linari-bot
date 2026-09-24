@@ -27,9 +27,9 @@ class LinariBot(Singleton):
         self.dp.include_routers(
             dev_commands,
             links_command,
-            celebrity_router,
             welcome_router,
             moderation_router,
+            celebrity_router,
         )
 
         self.dp.message.middleware(GlobalThrottlingMiddleware())

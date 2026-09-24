@@ -41,7 +41,7 @@ __WELCOME_TEXT = """
 
 
 @router.message(Command(Commands.RULES))
-async def links_command(message: Message) -> Message:
+async def rules_command(message: Message) -> Message:
     return await message.answer(__RULES, disable_web_page_preview=True)
 
 
